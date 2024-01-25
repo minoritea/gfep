@@ -21,17 +21,26 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	f, err := parser.ParseFile(token.NewFileSet(), os.Args[1], src, 0)
+	funcBlock, err := searchFunc(os.Args[1], os.Args[2], src)
 	if err != nil {
 		return err
 	}
+	fmt.Printf("%s\n", funcBlock)
+	return nil
+}
+
+func searchFunc(fileName, funcName string, src []byte) ([]byte, error) {
+	f, err := parser.ParseFile(token.NewFileSet(), fileName, src, 0)
+	if err != nil {
+		return nil, err
+	}
 	for _, d := range f.Decls {
 		if fn, ok := d.(*ast.FuncDecl); ok {
-			if fn.Name.Name == os.Args[2] {
+			if fn.Name.Name == funcName {
 				start, end := fn.Pos()-f.FileStart, fn.End()-f.FileStart
-				fmt.Printf("%s", src[start:end])
+				return src[start:end], nil
 			}
 		}
 	}
-	return nil
+	return nil, fmt.Errorf("function: %s not found in file: %s", funcName, fileName)
 }
