@@ -14,7 +14,7 @@ func TestSearchFunc(t *testing.T) {
 %s
 `, code))
 
-	block, err := searchFunc("target.go", "SearchTarget", src)
+	block, err := searchFunc("target.go", "SearchTarget", src, 0)
 	if err != nil {
 		t.Fatalf("failed to search function: error: %s", err)
 	}
